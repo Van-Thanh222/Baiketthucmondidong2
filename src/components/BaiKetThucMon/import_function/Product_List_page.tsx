@@ -1,3 +1,98 @@
+// import {
+//   FlatList,
+//   Image,
+//   StyleSheet,
+//   Text,
+//   TouchableOpacity,
+//   View,
+// } from 'react-native';
+// import React, {useEffect, useState} from 'react';
+// import Producttype from './Producttype';
+// import {fetchproduct, fetchtype, Product, Product_type} from '../database';
+// import {useNavigation} from '@react-navigation/native';
+// import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+// import {RootStackParamList} from '../../navigationService';
+// type Props = {
+//   selectedTypeId: number;
+//   setSelectedTypeId: (id: number) => void;
+// };
+// export const Product_List_page = ({
+//   selectedTypeId,
+//   setSelectedTypeId,
+// }: Props) => {
+//   const [types, setTypes] = useState<Product_type[]>([]);
+//   // const [selectedTypeId, setSelectedTypeId] = useState<number>(0);
+//   const [products, setProducts] = useState<Product[]>([]);
+
+//   // Thêm useEffect để fetch dữ liệu
+//   useEffect(() => {
+//     const loadTypes = async () => {
+//       const data = await fetchtype();
+//       setTypes(data);
+//     };
+//     const loadProducts = async () => {
+//       const data = await fetchproduct();
+//       setProducts(data);
+//     };
+//     loadTypes();
+//     loadProducts();
+//   }, []);
+//   // chuyển trang
+//   const navigation =
+//     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+//   return (
+//     <View>
+//       <Text style={styles.subTitle}>Loại xe</Text>{' '}
+//       <Producttype
+//         types={types}
+//         selectedTypeId={selectedTypeId}
+//         setSelectedTypeId={setSelectedTypeId}
+//       />
+//       <Text style={styles.subTitle}>
+//         {selectedTypeId === 0
+//           ? 'Tất cả xe'
+//           : `Xe thuộc loại: ${types.find(t => t.id === selectedTypeId)?.name}`}
+//       </Text>
+//       <FlatList
+//         showsVerticalScrollIndicator={false}
+//         data={
+//           selectedTypeId === 0
+//             ? products
+//             : products.filter(p => p.typeid === selectedTypeId)
+//         }
+//         keyExtractor={item => item.id.toString()}
+//         renderItem={({item}) => (
+//           <TouchableOpacity style={styles.carCard}>
+//             <Image style={styles.carImage} source={{uri: item.img}} />
+//             <View style={styles.carDetails}>
+//               <Text style={styles.carName}>{item.name}</Text>
+//               <Text style={styles.carPrice}>
+//                 Giá: {item.price.toLocaleString('en-US')} VND
+//               </Text>
+//               <TouchableOpacity
+//                 style={styles.viewDetailsButton}
+//                 onPress={() =>
+//                   navigation.navigate('Product_details', {
+//                     product: item,
+//                     types: types,
+//                   })
+//                 }>
+//                 <Text style={styles.viewDetailsButtonText}>Xem chi tiết</Text>
+//               </TouchableOpacity>
+//             </View>
+//           </TouchableOpacity>
+//         )}
+//         ListEmptyComponent={
+//           <Text style={styles.emptyListText}>Không có sản phẩm nào.</Text>
+//         }
+//       />
+//     </View>
+//   );
+// };
+
+// export default Product_List_page;
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -5,22 +100,29 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import Producttype from './Producttype';
 import {fetchproduct, fetchtype, Product, Product_type} from '../database';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigationService';
 
-export const Product_List_page = () => {
-  const [types, setTypes] = useState<Product_type[]>([]);
-  const [selectedTypeId, setSelectedTypeId] = useState<number>(0);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [products, setProducts] = useState<Product[]>([]);
+type Props = {
+  selectedTypeId: number;
+  setSelectedTypeId: (id: number) => void;
+};
 
-  // Thêm useEffect để fetch dữ liệu
+export const Product_List_page = ({
+  selectedTypeId,
+  setSelectedTypeId,
+}: Props) => {
+  const [types, setTypes] = useState<Product_type[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [search, setSearch] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+
   useEffect(() => {
     const loadTypes = async () => {
       const data = await fetchtype();
@@ -33,9 +135,69 @@ export const Product_List_page = () => {
     loadTypes();
     loadProducts();
   }, []);
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  // Lọc sản phẩm theo loại, tên và giá
+  const filteredProducts = products.filter(item => {
+    // Lọc theo loại
+    const matchType = selectedTypeId === 0 || item.typeid === selectedTypeId;
+    // Lọc theo tên
+    const matchName = item.name.toLowerCase().includes(search.toLowerCase());
+    // Lọc theo giá
+    const price = Number(item.price);
+    const min = minPrice ? Number(minPrice) : 0;
+    const max = maxPrice ? Number(maxPrice) : Number.MAX_SAFE_INTEGER;
+    const matchPrice = price >= min && price <= max;
+    return matchType && matchName && matchPrice;
+  });
+
   return (
     <View>
-      <Text style={styles.subTitle}>Loại xe</Text>{' '}
+      <Text style={styles.subTitle}>Tìm kiếm & Lọc sản phẩm</Text>
+      <TextInput
+        placeholder="Nhập tên xe..."
+        value={search}
+        onChangeText={setSearch}
+        style={{
+          borderWidth: 1,
+          borderColor: '#ccc',
+          borderRadius: 8,
+          padding: 8,
+          marginBottom: 8,
+        }}
+      />
+      <View style={{flexDirection: 'row', marginBottom: 8}}>
+        <TextInput
+          placeholder="Giá từ"
+          value={minPrice}
+          onChangeText={setMinPrice}
+          keyboardType="numeric"
+          style={{
+            flex: 1,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 8,
+            padding: 8,
+            marginRight: 4,
+          }}
+        />
+        <TextInput
+          placeholder="Đến"
+          value={maxPrice}
+          onChangeText={setMaxPrice}
+          keyboardType="numeric"
+          style={{
+            flex: 1,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 8,
+            padding: 8,
+            marginLeft: 4,
+          }}
+        />
+      </View>
       <Producttype
         types={types}
         selectedTypeId={selectedTypeId}
@@ -48,11 +210,7 @@ export const Product_List_page = () => {
       </Text>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={
-          selectedTypeId === 0
-            ? products
-            : products.filter(p => p.typeid === selectedTypeId)
-        }
+        data={filteredProducts}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) => (
           <TouchableOpacity style={styles.carCard}>
@@ -84,7 +242,6 @@ export const Product_List_page = () => {
 };
 
 export default Product_List_page;
-
 const styles = StyleSheet.create({
   subTitle: {
     fontSize: 18,

@@ -16,9 +16,7 @@ export const AboutShopScreen = () => {
         <Text style={styles.pageTitle}>Về Chúng Tôi</Text>
         <View style={styles.imageSection}>
           <Image
-            source={{
-              uri: 'https://cdn.pixabay.com/photo/2017/08/02/06/00/auto-2569507_1280.jpg',
-            }}
+            source={require('../../../../assets/image/banner/banner3.jpg')}
             style={styles.shopImage}
           />
           <Text style={styles.imageCaption}>

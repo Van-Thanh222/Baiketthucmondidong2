@@ -12,10 +12,11 @@ import {
 import Producttype from './import_function/Producttype';
 import {RootStackParamList} from '../navigationService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 // Giả định đối tượng product để UI Only có thể chạy và minh họa
 // Trong thực tế, bạn sẽ nhận product qua props hoặc navigation params
 
-const Product_details = () => {
+export const Product_details = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'Product_details'>>();
   // const route = useRoute();
   const {product, types} = route.params as {product: any; types: any[]};
@@ -26,6 +27,8 @@ const Product_details = () => {
   //   await AsyncStorage.setItem('selectedTypeId', typeId.toString());
   //   (navigation as any).navigate('Home');
   // };
+  ///// truyền dữ liệu từ trang chi tiết sang trang danh mục ở home
+  const navigation = useNavigation<BottomTabNavigationProp<any>>();
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -49,7 +52,27 @@ const Product_details = () => {
           <Producttype
             types={types}
             selectedTypeId={product.typeid}
-            setSelectedTypeId={() => {}} // Không cho đổi loại ở đây
+            // setSelectedTypeId={() => {}} // Không cho đổi loại ở đây
+            setSelectedTypeId={(typeId: number) => {
+              navigation.navigate('Taknavgation', {
+                screen: 'Home',
+                params: {selectedTypeId: typeId},
+              });
+              // Nếu vẫn không được, thử dùng reset như bên dưới:
+              // navigation.reset({
+              //   index: 0,
+              //   routes: [
+              //     {
+              //       name: 'Taknavgation',
+              //       state: {
+              //         routes: [
+              //           { name: 'Home', params: { selectedTypeId: typeId } },
+              //         ],
+              //       },
+              //     },
+              //   ],
+              // });
+            }}
           />
           <TouchableOpacity style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>Mua Ngay</Text>

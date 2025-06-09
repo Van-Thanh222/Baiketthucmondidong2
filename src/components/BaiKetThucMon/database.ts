@@ -218,6 +218,33 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
     return null;
   }
 };
+// sửa user
+export const updateUser = async (user: User): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql(
+      `UPDATE users SET 
+        username = ?, 
+        password = ?, 
+        avatar = ?, 
+        address = ?, 
+        phome = ?
+      WHERE id = ?`,
+      [
+        user.username,
+        user.password,
+        user.avatar,
+        user.address,
+        user.phome,
+        user.id,
+      ],
+    );
+    console.log('✅ User updated');
+  } catch (error) {
+    console.error('❌ Error updating user:', error);
+    throw error;
+  }
+};
 //////// Tạo Bảng product_type
 // tạo các trường cho loại sp
 export type Product_type = {

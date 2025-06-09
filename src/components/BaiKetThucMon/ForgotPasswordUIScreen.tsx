@@ -13,7 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 // import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 // import {RootStackParamList} from '../navigationService';
 import AutoDismissAlert from './notification_function';
-import taknavgation from '../taknavgation';
+import Taknavgation from '../taknavgation';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -56,7 +56,7 @@ const ForgotPassword = () => {
   const navigation = useNavigation() as any;
   // useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const gotologin = () => {
-    navigation.navigate('taknavgation', {screen: 'Login'});
+    navigation.navigate('Taknavgation', {screen: 'Login'});
   };
   return (
     <View style={styles.container}>

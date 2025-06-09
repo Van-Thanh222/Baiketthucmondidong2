@@ -4,9 +4,9 @@ import Login from './BaiKetThucMon/login';
 import SignUpUIOnly from './BaiKetThucMon/SignUpUIOnly';
 import ForgotPassword from './BaiKetThucMon/ForgotPasswordUIScreen';
 import Home from './BaiKetThucMon/Home';
-import taknavgation from './taknavgation';
 import Product_details from './BaiKetThucMon/Product_details';
 import {Product, Product_type} from './BaiKetThucMon/database';
+import Taknavgation from './taknavgation';
 export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
@@ -18,12 +18,12 @@ const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => (
   <Stack.Navigator
-    initialRouteName="taknavgation"
+    initialRouteName="Taknavgation"
     // screenOptions={{headerShown: false}}
   >
     <Stack.Screen
-      name="taknavgation"
-      component={taknavgation}
+      name="Taknavgation"
+      component={Taknavgation}
       options={{headerShown: false}}
     />
     {/* <Stack.Screen name="Login" component={Login} /> */}

@@ -47,7 +47,7 @@ const Producttype: React.FC<Props> = ({
         </TouchableOpacity>
       )}
       ListEmptyComponent={
-        <Text style={styles.emptyListText}>Không có loại xe nào.</Text>
+        <Text style={styles.emptyListText}>Không có hãng xe nào.</Text>
       }
       contentContainerStyle={styles.typeListContainer}
     />

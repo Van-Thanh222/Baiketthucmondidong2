@@ -11,7 +11,11 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigationService';
 import {fetchtype, Product_type, fetchproduct, Product} from './database';
@@ -95,9 +99,7 @@ const Home = () => {
   //// CHuyển trang
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  // const handlechitiet = () => {
-  //   navigation.navigate('Product_details');
-  // };
+
   ///// Hiện Trang
   const [activeMenu, setActiveMenu] = useState<
     | 'home'
@@ -105,8 +107,14 @@ const Home = () => {
     // | 'account'
     | 'about'
   >('home');
-  //// truyền dữ liệu từ trang chi tiết về
-
+  //// truyền dữ liệu từ trang chi tiết về danh mục
+  const route = useRoute();
+  useEffect(() => {
+    if (route.params && (route.params as any).selectedTypeId !== undefined) {
+      setActiveMenu('category');
+      setSelectedTypeId((route.params as any).selectedTypeId);
+    }
+  }, [route.params]);
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -185,7 +193,7 @@ const Home = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.subTitle}>Loại xe</Text>
+              <Text style={styles.subTitle}>Hãng xe</Text>
 
               {/* <FlatList
             horizontal // Hiển thị ngang
@@ -371,10 +379,12 @@ const Home = () => {
               <AboutShopScreen />
             </>
           )}
-          {/* {activeMenu == 'account' && <></>} */}
           {activeMenu == 'category' && (
             <>
-              <Product_List_page />
+              <Product_List_page
+                selectedTypeId={selectedTypeId}
+                setSelectedTypeId={setSelectedTypeId}
+              />
             </>
           )}
         </View>

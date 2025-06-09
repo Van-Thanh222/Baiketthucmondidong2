@@ -7,8 +7,9 @@ import Home from './BaiKetThucMon/Home';
 import {useUser} from './BaiKetThucMon/import_function/useUser';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import account from './BaiKetThucMon/import_function/account';
-const taknavgation = () => {
+import Account from './BaiKetThucMon/import_function/account';
+import Product_List_page from './BaiKetThucMon/import_function/Product_List_page';
+const Taknavgation = () => {
   const Tab = createBottomTabNavigator();
   /////
   const [user, setUser] = useState<any>(null);
@@ -48,14 +49,14 @@ const taknavgation = () => {
         <>
           <Tab.Screen
             name="Account"
-            component={account}
             options={{
               title: 'Account',
               tabBarIcon: ({color, size}) => (
                 <Text style={{fontSize: size, color}}>👤</Text>
               ),
-            }}
-          />
+            }}>
+            {() => <Account user={user} onUserUpdate={setUser} />}
+          </Tab.Screen>
         </>
       ) : (
         <>
@@ -81,10 +82,15 @@ const taknavgation = () => {
           />
         </>
       )}
+      {/* <Tab.Screen
+        name="Product_List_page"
+        component={Product_List_page}
+        options={{}}
+      /> */}
     </Tab.Navigator>
   );
 };
 
-export default taknavgation;
+export default Taknavgation;
 
 const styles = StyleSheet.create({});
