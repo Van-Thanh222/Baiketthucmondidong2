@@ -10,9 +10,10 @@ import {
 } from 'react-native';
 import {getUserByEmail} from './database';
 import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigationService';
+// import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+// import {RootStackParamList} from '../navigationService';
 import AutoDismissAlert from './notification_function';
+import taknavgation from '../taknavgation';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -52,10 +53,10 @@ const ForgotPassword = () => {
     }
   };
   // Điều hướng
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation() as any;
+  // useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const gotologin = () => {
-    navigation.navigate('Login');
+    navigation.navigate('taknavgation', {screen: 'Login'});
   };
   return (
     <View style={styles.container}>
