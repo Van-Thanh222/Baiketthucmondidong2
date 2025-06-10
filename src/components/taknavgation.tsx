@@ -9,6 +9,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Account from './BaiKetThucMon/import_function/account';
 import Product_List_page from './BaiKetThucMon/import_function/Product_List_page';
+import Admin_page from './BaiKetThucMon/Admin_page';
 const Taknavgation = () => {
   const Tab = createBottomTabNavigator();
   /////
@@ -37,13 +38,17 @@ const Taknavgation = () => {
       }}>
       <Tab.Screen
         name="Home"
-        component={Home}
+        //thay đổi cho đồng bộ dữ liệu (1)
+        // component={Home}
         options={{
           title: 'Home',
           tabBarIcon: ({color, size}) => (
             <Text style={{fontSize: size, color}}>🏡</Text>
           ),
         }}
+        //thay đổi cho đồng bộ dữ liệu (1)
+        children={() => <Home user={user} setUser={setUser} />}
+        //
       />
       {user ? (
         <>
@@ -87,6 +92,18 @@ const Taknavgation = () => {
         component={Product_List_page}
         options={{}}
       /> */}
+      {user && user.role === 'admin' && (
+        <Tab.Screen
+          name="Home Admin"
+          component={Admin_page}
+          options={{
+            title: 'Home Admin',
+            tabBarIcon: ({color, size}) => (
+              <Text style={{fontSize: size, color}}>🪙</Text>
+            ),
+          }}
+        />
+      )}
     </Tab.Navigator>
   );
 };

@@ -12,6 +12,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import ForgotPassword from './src/components/BaiKetThucMon/ForgotPasswordUIScreen';
 import Home from './src/components/BaiKetThucMon/Home';
 import Product_details from './src/components/BaiKetThucMon/Product_details';
+import Admin_page from './src/components/BaiKetThucMon/Admin_page';
 const App = () => {
   useEffect(() => {
     initUserTable();
@@ -23,7 +24,7 @@ const App = () => {
       <AppNavigator />
     </NavigationContainer>
     // <View>
-    //   <Product_details/>
+    //   <Admin_page />
     // </View>
   );
 };

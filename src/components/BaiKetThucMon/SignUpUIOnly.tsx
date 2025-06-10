@@ -95,6 +95,7 @@ const SignUpUIOnly = () => {
         avatar: imageUri ?? '',
         address,
         phome,
+        role: 'user',
       };
 
       await addUser(newUser);

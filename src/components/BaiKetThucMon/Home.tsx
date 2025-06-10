@@ -24,108 +24,120 @@ import Producttype from './import_function/Producttype';
 import {useUser} from './import_function/useUser';
 import AboutShopScreen from './import_function/AboutShopScreen';
 import Product_List_page from './import_function/Product_List_page';
-const Home = () => {
-  const [types, setTypes] = useState<Product_type[]>([]);
-  useEffect(() => {
-    const loadTypes = async () => {
-      const data = await fetchtype();
-      console.log('Types:', data);
-      setTypes(data);
-    };
-    loadTypes();
-  }, []);
-  const [products, setProducts] = useState<Product[]>([]);
-  useEffect(() => {
-    const loadProduct = async () => {
-      const data = await fetchproduct();
-      setProducts(data);
-    };
-    loadProduct();
-  }, []);
-  ///// CHuyển qua file header
-  // const [user, setUser] = useState<any>(null);
-  // const navigation =
-  //   useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const data = await AsyncStorage.getItem('user');
-  //       if (data) {
-  //         const parsed = JSON.parse(data);
-  //         setUser(parsed);
-  //       }
-  //     } catch (err) {
-  //       console.error('Lỗi lấy user:', err);
-  //     }
-  //   };
-  //   fetchUser();
-  // }, []);
-
-  // const handleLogout = async () => {
-  //   await AsyncStorage.removeItem('user');
-  //   setUser(null);
-  // };
-
-  // const handleLogin = () => {
-  //   navigation.navigate('Login');
-  // };
-  ///////
-
-  //Tìm Kiếm SP
-  const [tim, setTim] = useState<string>('');
-  const search = products.filter(item =>
-    item.name.toLocaleLowerCase().includes(tim.toLocaleLowerCase()),
-  );
+///
+//thay đổi cho đồng bộ dữ liệu (1)
+type HomeProps = {
+  user: any;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
+};
+///
+const Home = (
+  //thay đổi cho đồng bộ dữ liệu (1)
+  {user, setUser}: HomeProps,
+) =>
   //
-  ////// Tìm Theo Loại :
-  const [selectedTypeId, setSelectedTypeId] = useState<number>(0);
-  //// kiểm tra Xem Đã đăng nhập hay chưa
-  const [user, setUser] = useState<any>(null);
-  // useFocusEffect nó sẽ giúp reload lại user ở Home khi quay về
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchUser = async () => {
-        try {
-          const data = await AsyncStorage.getItem('user');
-          if (data) setUser(JSON.parse(data));
-          else setUser(null);
-        } catch (err) {
-          setUser(null);
-        }
+  {
+    const [types, setTypes] = useState<Product_type[]>([]);
+    useEffect(() => {
+      const loadTypes = async () => {
+        const data = await fetchtype();
+        console.log('Types:', data);
+        setTypes(data);
       };
-      fetchUser();
-    }, []),
-  );
-  //// CHuyển trang
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+      loadTypes();
+    }, []);
+    const [products, setProducts] = useState<Product[]>([]);
+    useEffect(() => {
+      const loadProduct = async () => {
+        const data = await fetchproduct();
+        setProducts(data);
+      };
+      loadProduct();
+    }, []);
+    ///// CHuyển qua file header
+    // const [user, setUser] = useState<any>(null);
+    // const navigation =
+    //   useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    // useEffect(() => {
+    //   const fetchUser = async () => {
+    //     try {
+    //       const data = await AsyncStorage.getItem('user');
+    //       if (data) {
+    //         const parsed = JSON.parse(data);
+    //         setUser(parsed);
+    //       }
+    //     } catch (err) {
+    //       console.error('Lỗi lấy user:', err);
+    //     }
+    //   };
+    //   fetchUser();
+    // }, []);
 
-  ///// Hiện Trang
-  const [activeMenu, setActiveMenu] = useState<
-    | 'home'
-    | 'category'
-    // | 'account'
-    | 'about'
-  >('home');
-  //// truyền dữ liệu từ trang chi tiết về danh mục
-  const route = useRoute();
-  useEffect(() => {
-    if (route.params && (route.params as any).selectedTypeId !== undefined) {
-      setActiveMenu('category');
-      setSelectedTypeId((route.params as any).selectedTypeId);
-    }
-  }, [route.params]);
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Image
-          style={styles.imgBn}
-          source={require('../../../assets/image/banner/banner3.jpg')}
-        />
-        {/*  */}
-        <Header user={user} setUser={setUser} />
-        {/* <Header /> */}
-        {/* <View style={styles.welcomeSection}>
+    // const handleLogout = async () => {
+    //   await AsyncStorage.removeItem('user');
+    //   setUser(null);
+    // };
+
+    // const handleLogin = () => {
+    //   navigation.navigate('Login');
+    // };
+    ///////
+
+    //Tìm Kiếm SP
+    const [tim, setTim] = useState<string>('');
+    const search = products.filter(item =>
+      item.name.toLocaleLowerCase().includes(tim.toLocaleLowerCase()),
+    );
+    //
+    ////// Tìm Theo Loại :
+    const [selectedTypeId, setSelectedTypeId] = useState<number>(0);
+    //// kiểm tra Xem Đã đăng nhập hay chưa
+    // const [user, setUser] = useState<any>(null);
+    // useFocusEffect nó sẽ giúp reload lại user ở Home khi quay về
+    useFocusEffect(
+      React.useCallback(() => {
+        const fetchUser = async () => {
+          try {
+            const data = await AsyncStorage.getItem('user');
+            if (data) setUser(JSON.parse(data));
+            else setUser(null);
+          } catch (err) {
+            setUser(null);
+          }
+        };
+        fetchUser();
+      }, []),
+    );
+    //// CHuyển trang
+    const navigation =
+      useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    ///// Hiện Trang
+    const [activeMenu, setActiveMenu] = useState<
+      | 'home'
+      | 'category'
+      // | 'account'
+      | 'about'
+    >('home');
+    //// truyền dữ liệu từ trang chi tiết về danh mục
+    const route = useRoute();
+    useEffect(() => {
+      if (route.params && (route.params as any).selectedTypeId !== undefined) {
+        setActiveMenu('category');
+        setSelectedTypeId((route.params as any).selectedTypeId);
+      }
+    }, [route.params]);
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Image
+            style={styles.imgBn}
+            source={require('../../../assets/image/banner/banner3.jpg')}
+          />
+          {/*  */}
+          <Header user={user} setUser={setUser} />
+          {/* <Header /> */}
+          {/* <View style={styles.welcomeSection}>
           {user ? (
             <>
               <Text style={styles.welcomeText}>Xin chào, {user.username}</Text>
@@ -149,53 +161,53 @@ const Home = () => {
           )}
         </View> */}
 
-        <View style={styles.mainNavButtonsContainer}>
-          <TouchableOpacity
-            style={styles.mainNavButton}
-            onPress={() => setActiveMenu('home')}>
-            <Text style={styles.mainNavButtonText}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.mainNavButton}
-            onPress={() => setActiveMenu('category')}>
-            <Text style={styles.mainNavButtonText}>Danh mục</Text>
-          </TouchableOpacity>
-          {/* {user ? (
+          <View style={styles.mainNavButtonsContainer}>
+            <TouchableOpacity
+              style={styles.mainNavButton}
+              onPress={() => setActiveMenu('home')}>
+              <Text style={styles.mainNavButtonText}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.mainNavButton}
+              onPress={() => setActiveMenu('category')}>
+              <Text style={styles.mainNavButtonText}>Danh mục</Text>
+            </TouchableOpacity>
+            {/* {user ? (
             <TouchableOpacity
               style={styles.mainNavButton}
               onPress={() => setActiveMenu('account')}>
               <Text style={styles.mainNavButtonText}>Tài Khoản</Text>
             </TouchableOpacity>
           ) : ( */}
-          <TouchableOpacity
-            style={styles.mainNavButton}
-            onPress={() => setActiveMenu('about')}>
-            <Text style={styles.mainNavButtonText}>Giới Thiệu</Text>
-          </TouchableOpacity>
-          {/* )} */}
-        </View>
+            <TouchableOpacity
+              style={styles.mainNavButton}
+              onPress={() => setActiveMenu('about')}>
+              <Text style={styles.mainNavButtonText}>Giới Thiệu</Text>
+            </TouchableOpacity>
+            {/* )} */}
+          </View>
 
-        <View style={styles.contentSection}>
-          {activeMenu == 'home' && (
-            <>
-              <Text style={styles.contentSectionTitle}>
-                Tìm kiếm xe mơ ước của bạn
-              </Text>
-              <View style={styles.searchBar}>
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="Nhập Tên Xe..."
-                  placeholderTextColor="#7F8C8D"
-                  onChangeText={setTim}
-                />
-                <TouchableOpacity style={styles.searchButton}>
-                  <Text style={styles.searchButtonText}>Tìm kiếm</Text>
-                </TouchableOpacity>
-              </View>
+          <View style={styles.contentSection}>
+            {activeMenu == 'home' && (
+              <>
+                <Text style={styles.contentSectionTitle}>
+                  Tìm kiếm xe mơ ước của bạn
+                </Text>
+                <View style={styles.searchBar}>
+                  <TextInput
+                    style={styles.searchInput}
+                    placeholder="Nhập Tên Xe..."
+                    placeholderTextColor="#7F8C8D"
+                    onChangeText={setTim}
+                  />
+                  <TouchableOpacity style={styles.searchButton}>
+                    <Text style={styles.searchButtonText}>Tìm kiếm</Text>
+                  </TouchableOpacity>
+                </View>
 
-              <Text style={styles.subTitle}>Hãng xe</Text>
+                <Text style={styles.subTitle}>Hãng xe</Text>
 
-              {/* <FlatList
+                {/* <FlatList
             horizontal // Hiển thị ngang
             showsHorizontalScrollIndicator={false}
             data={types}
@@ -218,7 +230,7 @@ const Home = () => {
             }
             contentContainerStyle={styles.typeListContainer}
           /> */}
-              {/* <FlatList
+                {/* <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
             data={types}
@@ -249,14 +261,14 @@ const Home = () => {
             }
             contentContainerStyle={styles.typeListContainer}
           /> */}
-              <Producttype
-                types={types}
-                selectedTypeId={selectedTypeId}
-                setSelectedTypeId={setSelectedTypeId}
-              />
-              {tim == '' ? (
-                <>
-                  {/* <Text style={styles.subTitle}>Xe phổ biến</Text>
+                <Producttype
+                  types={types}
+                  selectedTypeId={selectedTypeId}
+                  setSelectedTypeId={setSelectedTypeId}
+                />
+                {tim == '' ? (
+                  <>
+                    {/* <Text style={styles.subTitle}>Xe phổ biến</Text>
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={products}
@@ -283,125 +295,127 @@ const Home = () => {
                   </Text>
                 }
               /> */}
-                  <Text style={styles.subTitle}>
-                    {selectedTypeId === 0
-                      ? 'Tất cả xe'
-                      : `Xe thuộc loại: ${
-                          types.find(t => t.id === selectedTypeId)?.name
-                        }`}
-                  </Text>
-                  <FlatList
-                    showsVerticalScrollIndicator={false}
-                    data={
-                      selectedTypeId === 0
-                        ? products
-                        : products.filter(p => p.typeid === selectedTypeId)
-                    }
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({item}) => (
-                      <TouchableOpacity style={styles.carCard}>
-                        <Image
-                          style={styles.carImage}
-                          source={{uri: item.img}}
-                        />
-                        <View style={styles.carDetails}>
-                          <Text style={styles.carName}>{item.name}</Text>
-                          <Text style={styles.carPrice}>
-                            Giá: {item.price.toLocaleString('en-US')} VND
-                          </Text>
-                          <TouchableOpacity
-                            style={styles.viewDetailsButton}
-                            onPress={() =>
-                              navigation.navigate('Product_details', {
-                                product: item,
-                                types: types,
-                              })
-                            }>
-                            <Text style={styles.viewDetailsButtonText}>
-                              Xem chi tiết
+                    <Text style={styles.subTitle}>
+                      {selectedTypeId === 0
+                        ? 'Tất cả xe'
+                        : `Xe thuộc loại: ${
+                            types.find(t => t.id === selectedTypeId)?.name
+                          }`}
+                    </Text>
+                    <FlatList
+                      showsVerticalScrollIndicator={false}
+                      data={
+                        selectedTypeId === 0
+                          ? products
+                          : products.filter(p => p.typeid === selectedTypeId)
+                      }
+                      keyExtractor={item => item.id.toString()}
+                      renderItem={({item}) => (
+                        <TouchableOpacity style={styles.carCard}>
+                          <Image
+                            style={styles.carImage}
+                            source={{uri: item.img}}
+                          />
+                          <View style={styles.carDetails}>
+                            <Text style={styles.carName}>{item.name}</Text>
+                            <Text style={styles.carPrice}>
+                              Giá: {item.price.toLocaleString('en-US')} VND
                             </Text>
-                          </TouchableOpacity>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    ListEmptyComponent={
-                      <Text style={styles.emptyListText}>
-                        Không có sản phẩm nào.
-                      </Text>
-                    }
-                  />
-                </>
-              ) : (
-                <>
-                  <Text style={styles.subTitle}>Xe Tìm : {tim}</Text>
-                  <FlatList
-                    showsVerticalScrollIndicator={false}
-                    data={search}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({item}) => (
-                      <TouchableOpacity style={styles.carCard}>
-                        <Image
-                          style={styles.carImage}
-                          source={{uri: item.img}}
-                        />
-                        <View style={styles.carDetails}>
-                          <Text style={styles.carName}>{item.name}</Text>
-                          <Text style={styles.carPrice}>
-                            Giá: {item.price} VND
-                          </Text>
-                          <TouchableOpacity
-                            style={styles.viewDetailsButton}
-                            onPress={() =>
-                              navigation.navigate('Product_details', {
-                                product: item,
-                                types: types,
-                              })
-                            }>
-                            <Text style={styles.viewDetailsButtonText}>
-                              Xem chi tiết
+                            <TouchableOpacity
+                              style={styles.viewDetailsButton}
+                              onPress={() =>
+                                navigation.navigate('Product_details', {
+                                  product: item,
+                                  types: types,
+                                })
+                              }>
+                              <Text style={styles.viewDetailsButtonText}>
+                                Xem chi tiết
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      ListEmptyComponent={
+                        <Text style={styles.emptyListText}>
+                          Không có sản phẩm nào.
+                        </Text>
+                      }
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.subTitle}>Xe Tìm : {tim}</Text>
+                    <FlatList
+                      showsVerticalScrollIndicator={false}
+                      data={search}
+                      keyExtractor={item => item.id.toString()}
+                      renderItem={({item}) => (
+                        <TouchableOpacity style={styles.carCard}>
+                          <Image
+                            style={styles.carImage}
+                            source={{uri: item.img}}
+                          />
+                          <View style={styles.carDetails}>
+                            <Text style={styles.carName}>{item.name}</Text>
+                            <Text style={styles.carPrice}>
+                              Giá: {item.price} VND
                             </Text>
-                          </TouchableOpacity>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    ListEmptyComponent={
-                      <Text style={styles.emptyListText}>
-                        Không có sản phẩm nào.
-                      </Text>
-                    }
-                  />
-                </>
-              )}
-            </>
-          )}
-          {activeMenu == 'about' && (
-            <>
-              <AboutShopScreen />
-            </>
-          )}
-          {activeMenu == 'category' && (
-            <>
-              <Product_List_page
-                selectedTypeId={selectedTypeId}
-                setSelectedTypeId={setSelectedTypeId}
-              />
-            </>
-          )}
-        </View>
-        <View style={styles.traditionalFooter}>
-          <Text style={styles.footerAppName}>CarRent App</Text>
-          <Text style={styles.footerCopyright}>
-            © 2025 CarRent. All rights reserved.
-          </Text>
-          <Text style={styles.footerLink}>
-            Chính sách bảo mật | Điều khoản sử dụng
-          </Text>
-          <Text style={styles.footerContact}>Liên hệ: support@carrent.com</Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+                            <TouchableOpacity
+                              style={styles.viewDetailsButton}
+                              onPress={() =>
+                                navigation.navigate('Product_details', {
+                                  product: item,
+                                  types: types,
+                                })
+                              }>
+                              <Text style={styles.viewDetailsButtonText}>
+                                Xem chi tiết
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      ListEmptyComponent={
+                        <Text style={styles.emptyListText}>
+                          Không có sản phẩm nào.
+                        </Text>
+                      }
+                    />
+                  </>
+                )}
+              </>
+            )}
+            {activeMenu == 'about' && (
+              <>
+                <AboutShopScreen />
+              </>
+            )}
+            {activeMenu == 'category' && (
+              <>
+                <Product_List_page
+                  selectedTypeId={selectedTypeId}
+                  setSelectedTypeId={setSelectedTypeId}
+                />
+              </>
+            )}
+          </View>
+          <View style={styles.traditionalFooter}>
+            <Text style={styles.footerAppName}>CarRent App</Text>
+            <Text style={styles.footerCopyright}>
+              © 2025 CarRent. All rights reserved.
+            </Text>
+            <Text style={styles.footerLink}>
+              Chính sách bảo mật | Điều khoản sử dụng
+            </Text>
+            <Text style={styles.footerContact}>
+              Liên hệ: support@carrent.com
+            </Text>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  };
 export default Home;
 
 const styles = StyleSheet.create({

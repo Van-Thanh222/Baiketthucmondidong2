@@ -61,6 +61,7 @@ const Login = () => {
           avatar: user.avatar,
           address: user.address,
           phome: user.phome,
+          role: user.role,
         };
         await AsyncStorage.setItem('user', JSON.stringify(userData));
         setAlertVisible(true);

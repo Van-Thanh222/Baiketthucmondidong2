@@ -121,6 +121,7 @@ const Account = ({user, onUserUpdate}: AccountProps) => {
         avatar: form.avatar,
         address: form.address,
         phome: form.phome,
+        role: user.role,
       };
 
       await updateUser(updatedUser);
@@ -157,11 +158,26 @@ const Account = ({user, onUserUpdate}: AccountProps) => {
             <TouchableOpacity
               onPress={handlePickImage}
               style={styles.avatarTouchable}>
-              <Image
+              {/* <Image
                 source={{uri: form.avatar}}
                 style={styles.avatar}
                 onError={e => {
                   console.log('Error loading avatar:', e.nativeEvent.error);
+                  setForm(prevForm => ({
+                    ...prevForm,
+                    avatar: 'https://via.placeholder.com/120?text=Lỗi+Ảnh',
+                  }));
+                }}
+              /> */}
+              <Image
+                source={{
+                  uri:
+                    form.avatar && form.avatar.trim() !== ''
+                      ? form.avatar
+                      : 'https://via.placeholder.com/120',
+                }}
+                style={styles.avatar}
+                onError={e => {
                   setForm(prevForm => ({
                     ...prevForm,
                     avatar: 'https://via.placeholder.com/120?text=Lỗi+Ảnh',

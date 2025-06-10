@@ -22,6 +22,7 @@ export type User = {
   avatar: string;
   address: string;
   phome: string;
+  role: string;
 };
 // Tạo dữ liệu mẫu
 const initiaUsers: User[] = [
@@ -34,6 +35,7 @@ const initiaUsers: User[] = [
       'file:///data/user/0/com.laptrinhreactnative/cache/rn_image_picker_lib_temp_0b0af829-1cb8-4413-b4df-9d10f107eba4.jpg',
     address: 'Quảng Nam',
     phome: '0123456789',
+    role: 'admin',
   },
 ];
 // Tạo bảng người dùng
@@ -84,9 +86,10 @@ export const initUserTable = async (onSuccess?: () => void): Promise<void> => {
         username TEXT NOT NULL,
         password TEXT NOT NULL,
         email TEXT NOT NULL,
-        avatar TEXT,
-        address TEXT,
-        phome TEXT
+        avatar TEXT NOT NULL,
+        address TEXT NOT NULL,
+        phome TEXT NOT NULL,
+        role TEXT
       )`,
     );
     console.log('User table created successfully!');
@@ -101,7 +104,7 @@ export const initUserTable = async (onSuccess?: () => void): Promise<void> => {
       // 📥 Nếu chưa có dữ liệu thì chèn
       for (const user of initiaUsers) {
         await db.executeSql(
-          'INSERT INTO users (username, password, email, avatar, address, phome) VALUES (?, ?, ?, ?, ?, ?)',
+          'INSERT INTO users (username, password, email, avatar, address, phome,role) VALUES (?, ?, ?, ?, ?, ?,?)',
           [
             user.username,
             user.password,
@@ -109,6 +112,7 @@ export const initUserTable = async (onSuccess?: () => void): Promise<void> => {
             user.avatar,
             user.address,
             user.phome,
+            user.role,
           ],
         );
       }
@@ -146,6 +150,7 @@ export const findUsers = async (
         avatar: user.avatar,
         address: user.address,
         phome: user.phome,
+        role: user.role,
       };
     } else {
       return null;
@@ -161,7 +166,7 @@ export const addUser = async (user: UserInput): Promise<void> => {
   try {
     const db = await getDb();
     await db.executeSql(
-      'INSERT INTO users (username, password, email, avatar, address, phome) VALUES (?, ?, ?, ?, ?, ?)',
+      'INSERT INTO users (username, password, email, avatar, address, phome,role) VALUES (?, ?, ?, ?, ?, ?,?)',
       [
         user.username,
         user.password,
@@ -169,6 +174,7 @@ export const addUser = async (user: UserInput): Promise<void> => {
         user.avatar,
         user.address,
         user.phome,
+        user.role,
       ],
     );
     console.log('User added successfully!', user);
@@ -209,6 +215,7 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
         avatar: user.avatar,
         address: user.address,
         phome: user.phome,
+        role: user.role,
       };
     } else {
       return null;
@@ -228,7 +235,8 @@ export const updateUser = async (user: User): Promise<void> => {
         password = ?, 
         avatar = ?, 
         address = ?, 
-        phome = ?
+        phome = ?,
+        role = ?
       WHERE id = ?`,
       [
         user.username,
@@ -237,11 +245,26 @@ export const updateUser = async (user: User): Promise<void> => {
         user.address,
         user.phome,
         user.id,
+        user.role,
       ],
     );
     console.log('✅ User updated');
   } catch (error) {
     console.error('❌ Error updating user:', error);
+    throw error;
+  }
+};
+// sửa role
+export const updateUserRole = async (
+  id: number,
+  role: string,
+): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql('UPDATE users SET role = ? WHERE id = ?', [role, id]);
+    console.log('✅ User role updated');
+  } catch (error) {
+    console.error('❌ Error updating user role:', error);
     throw error;
   }
 };
@@ -336,6 +359,53 @@ export const fetchtype = async (): Promise<Product_type[]> => {
     return [];
   }
 };
+// thêm
+export const addProductType = async (
+  name: string,
+  avatar: string,
+): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql(
+      'INSERT INTO product_type (name, avatar) VALUES (?, ?)',
+      [name, avatar],
+    );
+    console.log('✅ Product type added!');
+  } catch (error) {
+    console.error('❌ Error adding product type:', error);
+    throw error;
+  }
+};
+
+// sửa
+export const updateProductType = async (
+  id: number,
+  name: string,
+  avatar: string,
+): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql(
+      'UPDATE product_type SET name = ?, avatar = ? WHERE id = ?',
+      [name, avatar, id],
+    );
+    console.log('✅ Product type updated!');
+  } catch (error) {
+    console.error('❌ Error updating product type:', error);
+    throw error;
+  }
+};
+//Xóa
+export const deleteProductType = async (id: number): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql('DELETE FROM product_type WHERE id = ?', [id]);
+    console.log('✅ Product type deleted!');
+  } catch (error) {
+    console.error('❌ Error deleting product type:', error);
+    throw error;
+  }
+};
 //////// Tạo Bảng product
 // tạo các trường cho SP
 export type Product = {
@@ -421,5 +491,59 @@ export const fetchproduct = async (): Promise<Product[]> => {
   } catch (error) {
     console.error('Error fetching product:', error);
     return [];
+  }
+};
+// thêm
+export const addProduct = async (
+  product: Omit<Product, 'id'>,
+): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql(
+      'INSERT INTO product (name, price, img, Describe, typeid) VALUES (?, ?, ?, ?, ?)',
+      [
+        product.name,
+        product.price,
+        product.img,
+        product.Describe,
+        product.typeid,
+      ],
+    );
+    console.log('✅ Product added!');
+  } catch (error) {
+    console.error('❌ Error adding product:', error);
+    throw error;
+  }
+};
+//sửa
+export const updateProduct = async (product: Product): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql(
+      'UPDATE product SET name = ?, price = ?, img = ?, Describe = ?, typeid = ? WHERE id = ?',
+      [
+        product.name,
+        product.price,
+        product.img,
+        product.Describe,
+        product.typeid,
+        product.id,
+      ],
+    );
+    console.log('✅ Product updated!');
+  } catch (error) {
+    console.error('❌ Error updating product:', error);
+    throw error;
+  }
+};
+//xóa
+export const deleteProduct = async (id: number): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql('DELETE FROM product WHERE id = ?', [id]);
+    console.log('✅ Product deleted!');
+  } catch (error) {
+    console.error('❌ Error deleting product:', error);
+    throw error;
   }
 };
